@@ -235,7 +235,7 @@ const ImageViewer = forwardRef((props, ref) => {
             {
                 width: finalWidth,
                 height: finalHeight,
-                resizeMode: "center"
+                resizeMode: "cover"
             },
         ]} source={{
             uri: props.imageUrl,
