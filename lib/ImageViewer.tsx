@@ -310,7 +310,7 @@ const ImageViewer = forwardRef((props: ImageViewerProps, ref) => {
                             {
                                 width: finalWidth,
                                 height: finalHeight,
-                                resizeMode: "center"
+                                resizeMode: "cover"
                             },
                         ]}
                         source={{
