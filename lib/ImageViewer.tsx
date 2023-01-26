@@ -22,8 +22,8 @@ export type ImageViewerProps = {
 const ImageViewer = forwardRef((props: ImageViewerProps, ref) => {
     const dimensions = useWindowDimensions();
 
-    const scale = useSharedValue( 1);
-    const savedScale = useSharedValue( 1);
+    const scale = useSharedValue( 1.5);
+    const savedScale = useSharedValue( 1.5);
 
     const translateY = useSharedValue(0);
     const savedTranslateY = useSharedValue(0);
@@ -258,11 +258,15 @@ const ImageViewer = forwardRef((props: ImageViewerProps, ref) => {
 
     useImperativeHandle(ref, () => ({
         incScale() {
-            scale.value = scale.value + 0.5;
+            if (scale.value < MAX_ZOOM_SCALE) {
+                scale.value = withTiming(scale.value + 0.5);
+            }
             savedScale.value = scale.value;
         },
         decScale() {
-            scale.value = scale.value - 0.5;
+            if (scale.value > 1) {
+                scale.value = withTiming(scale.value - 0.5);
+            }
             savedScale.value = scale.value;
         }
     }));
@@ -310,7 +314,7 @@ const ImageViewer = forwardRef((props: ImageViewerProps, ref) => {
                             {
                                 width: finalWidth,
                                 height: finalHeight,
-                                resizeMode: "cover"
+                                resizeMode: "contain"
                             },
                         ]}
                         source={{
