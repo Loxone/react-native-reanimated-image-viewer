@@ -77,7 +77,7 @@ const ImageViewer = forwardRef((props: ImageViewerProps, ref) => {
 
 
     const pinchGesture = Gesture.Pinch()
-        .onBegin(() => {
+        .onStart(() => {
             savedScale.value = scale.value;
         })
         .onUpdate((event) => {
