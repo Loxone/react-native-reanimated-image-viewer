@@ -15,7 +15,6 @@ export type ImageViewerProps = {
     width: number;
     height: number;
     onRequestClose: () => unknown;
-    onSingleTap?: () => unknown;
     sizeCallback: (translateX: number, translateY: number, scale: number, imageUrl: string) => unknown;
 };
 
@@ -194,12 +193,8 @@ const ImageViewer = forwardRef((props: ImageViewerProps, ref) => {
             }
         });
 
-    const singleTap = Gesture.Tap().onEnd(() => {
-        props.onSingleTap && runOnJS(props.onSingleTap)();
-    });
-
     const doubleTap = Gesture.Tap()
-        .onBegin((event) => {
+        .onStart((event) => {
             if (scale.value > 1) {
                 scale.value = withTiming(1);
                 translateX.value = withTiming(0);
@@ -295,7 +290,7 @@ const ImageViewer = forwardRef((props: ImageViewerProps, ref) => {
     }, []);
 
     const composedGestures = Gesture.Simultaneous(pinchGesture, panGesture);
-    const allGestures = Gesture.Exclusive(composedGestures, doubleTap, singleTap);
+    const allGestures = Gesture.Exclusive(composedGestures, doubleTap);
 
     return (
         <GestureDetector gesture={allGestures}>

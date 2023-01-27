@@ -141,11 +141,8 @@ const ImageViewer = forwardRef((props, ref) => {
             });
         }
     });
-    const singleTap = Gesture.Tap().onEnd(() => {
-        props.onSingleTap && runOnJS(props.onSingleTap)();
-    });
     const doubleTap = Gesture.Tap()
-        .onBegin((event) => {
+        .onStart((event) => {
         if (scale.value > 1) {
             scale.value = withTiming(1);
             translateX.value = withTiming(0);
@@ -225,7 +222,7 @@ const ImageViewer = forwardRef((props, ref) => {
         };
     }, []);
     const composedGestures = Gesture.Simultaneous(pinchGesture, panGesture);
-    const allGestures = Gesture.Exclusive(composedGestures, doubleTap, singleTap);
+    const allGestures = Gesture.Exclusive(composedGestures, doubleTap);
     return (<GestureDetector gesture={allGestures}>
             <Animated.View style={{
             flex: 1,

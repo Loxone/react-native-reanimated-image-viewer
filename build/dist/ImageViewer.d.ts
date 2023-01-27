@@ -4,7 +4,6 @@ export type ImageViewerProps = {
     width: number;
     height: number;
     onRequestClose: () => unknown;
-    onSingleTap?: () => unknown;
     sizeCallback: (translateX: number, translateY: number, scale: number, imageUrl: string) => unknown;
 };
 declare const ImageViewer: React.ForwardRefExoticComponent<ImageViewerProps & React.RefAttributes<unknown>>;
