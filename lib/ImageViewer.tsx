@@ -77,7 +77,7 @@ const ImageViewer = forwardRef((props: ImageViewerProps, ref) => {
 
 
     const pinchGesture = Gesture.Pinch()
-        .onStart(() => {
+        .onBegin(() => {
             savedScale.value = scale.value;
         })
         .onUpdate((event) => {
@@ -85,7 +85,7 @@ const ImageViewer = forwardRef((props: ImageViewerProps, ref) => {
         });
 
     const panGesture = Gesture.Pan()
-        .onStart(() => {
+        .onBegin(() => {
             savedTranslateX.value = translateX.value;
             savedTranslateY.value = translateY.value;
         })
@@ -199,7 +199,7 @@ const ImageViewer = forwardRef((props: ImageViewerProps, ref) => {
     });
 
     const doubleTap = Gesture.Tap()
-        .onStart((event) => {
+        .onBegin((event) => {
             if (scale.value > 1) {
                 scale.value = withTiming(1);
                 translateX.value = withTiming(0);
