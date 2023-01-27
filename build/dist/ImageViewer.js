@@ -42,14 +42,14 @@ const ImageViewer = forwardRef((props, ref) => {
         }
     }, [props.width, props.height, dimensions.width, dimensions.height]);
     const pinchGesture = Gesture.Pinch()
-        .onStart(() => {
+        .onBegin(() => {
         savedScale.value = scale.value;
     })
         .onUpdate((event) => {
         scale.value = savedScale.value * event.scale;
     });
     const panGesture = Gesture.Pan()
-        .onStart(() => {
+        .onBegin(() => {
         savedTranslateX.value = translateX.value;
         savedTranslateY.value = translateY.value;
     })
@@ -145,7 +145,7 @@ const ImageViewer = forwardRef((props, ref) => {
         props.onSingleTap && runOnJS(props.onSingleTap)();
     });
     const doubleTap = Gesture.Tap()
-        .onStart((event) => {
+        .onBegin((event) => {
         if (scale.value > 1) {
             scale.value = withTiming(1);
             translateX.value = withTiming(0);
