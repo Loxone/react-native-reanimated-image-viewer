@@ -30,8 +30,8 @@ const ImageViewer = forwardRef((props: ImageViewerProps, ref) => {
 
     const dimensions = useWindowDimensions();
 
-    const scale = useSharedValue(1.5);
-    const savedScale = useSharedValue(1.5);
+    const scale = useSharedValue(1.1);
+    const savedScale = useSharedValue(1.1);
 
     const translateY = useSharedValue(0);
     const savedTranslateY = useSharedValue(0);

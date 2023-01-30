@@ -5,8 +5,8 @@ import Animated, { runOnJS, useAnimatedStyle, useSharedValue, withDecay, withTim
 const ImageViewer = forwardRef((props, ref) => {
     const [didLoad, setDidLoad] = useState(false);
     const dimensions = useWindowDimensions();
-    const scale = useSharedValue(1.5);
-    const savedScale = useSharedValue(1.5);
+    const scale = useSharedValue(1.1);
+    const savedScale = useSharedValue(1.1);
     const translateY = useSharedValue(0);
     const savedTranslateY = useSharedValue(0);
     const translateX = useSharedValue(0);
