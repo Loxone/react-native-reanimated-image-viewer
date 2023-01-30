@@ -1,7 +1,7 @@
-import React, {useMemo, useEffect, useImperativeHandle, forwardRef} from "react";
+import React, { useMemo, useEffect, useImperativeHandle, forwardRef, useState } from "react";
 
-import {useWindowDimensions} from "react-native";
-import {Gesture, GestureDetector} from "react-native-gesture-handler";
+import { useWindowDimensions } from "react-native";
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
     runOnJS,
     useAnimatedStyle,
@@ -15,14 +15,23 @@ export type ImageViewerProps = {
     width: number;
     height: number;
     onRequestClose: () => unknown;
-    sizeCallback: (translateX: number, translateY: number, scale: number, imageUrl: string) => unknown;
+    sizeCallback: (
+        translateX: number,
+        translateY: number,
+        scale: number,
+        imageUrl: string
+    ) => unknown;
+    loadCallback: (load: boolean) => unknown
+    
 };
 
 const ImageViewer = forwardRef((props: ImageViewerProps, ref) => {
+    const [didLoad, setDidLoad] = useState(false);
+
     const dimensions = useWindowDimensions();
 
-    const scale = useSharedValue( 1.5);
-    const savedScale = useSharedValue( 1.5);
+    const scale = useSharedValue(1.5);
+    const savedScale = useSharedValue(1.5);
 
     const translateY = useSharedValue(0);
     const savedTranslateY = useSharedValue(0);
@@ -32,7 +41,7 @@ const ImageViewer = forwardRef((props: ImageViewerProps, ref) => {
 
     const MAX_ZOOM_SCALE = 3;
 
-    const {width: finalWidth, height: finalHeight} = useMemo(() => {
+    const { width: finalWidth, height: finalHeight } = useMemo(() => {
         function ruleOfThree(
             firstValue: number,
             firstResult: number,
@@ -270,11 +279,19 @@ const ImageViewer = forwardRef((props: ImageViewerProps, ref) => {
         props.sizeCallback(translateX.value, translateY.value, scale.value, props.imageUrl);
     }, [props.imageUrl, translateX.value, translateY.value, scale.value]);
 
+    useEffect(() => {
+        props.loadCallback(didLoad);
+    }, [didLoad]);
+
+    useEffect(() => {
+        setDidLoad(false);
+    }, [props.imageUrl]);
+
     const imageContainerAnimatedStyle = useAnimatedStyle(() => {
         return {
             transform: [
-                {translateX: translateX.value},
-                {translateY: translateY.value},
+                { translateX: translateX.value },
+                { translateY: translateY.value },
             ],
         };
     });
@@ -314,6 +331,9 @@ const ImageViewer = forwardRef((props: ImageViewerProps, ref) => {
                         ]}
                         source={{
                             uri: props.imageUrl,
+                        }}
+                        onLoadEnd={() => {
+                            setDidLoad(true);
                         }}
                     />
                 </Animated.View>

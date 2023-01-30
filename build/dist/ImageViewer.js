@@ -1,8 +1,9 @@
-import React, { useMemo, useEffect, useImperativeHandle, forwardRef } from "react";
+import React, { useMemo, useEffect, useImperativeHandle, forwardRef, useState } from "react";
 import { useWindowDimensions } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, { runOnJS, useAnimatedStyle, useSharedValue, withDecay, withTiming, } from "react-native-reanimated";
 const ImageViewer = forwardRef((props, ref) => {
+    const [didLoad, setDidLoad] = useState(false);
     const dimensions = useWindowDimensions();
     const scale = useSharedValue(1.5);
     const savedScale = useSharedValue(1.5);
@@ -204,6 +205,12 @@ const ImageViewer = forwardRef((props, ref) => {
     useEffect(() => () => {
         props.sizeCallback(translateX.value, translateY.value, scale.value, props.imageUrl);
     }, [props.imageUrl, translateX.value, translateY.value, scale.value]);
+    useEffect(() => {
+        props.loadCallback(didLoad);
+    }, [didLoad]);
+    useEffect(() => {
+        setDidLoad(false);
+    }, [props.imageUrl]);
     const imageContainerAnimatedStyle = useAnimatedStyle(() => {
         return {
             transform: [
@@ -240,6 +247,8 @@ const ImageViewer = forwardRef((props, ref) => {
             },
         ]} source={{
             uri: props.imageUrl,
+        }} onLoadEnd={() => {
+            setDidLoad(true);
         }}/>
                 </Animated.View>
             </Animated.View>
