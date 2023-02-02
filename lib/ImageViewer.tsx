@@ -15,14 +15,7 @@ export type ImageViewerProps = {
     width: number;
     height: number;
     onRequestClose: () => unknown;
-    sizeCallback: (
-        translateX: number,
-        translateY: number,
-        scale: number,
-        imageUrl: string
-    ) => unknown;
     loadCallback: (load: boolean) => unknown
-    
 };
 
 const ImageViewer = forwardRef((props: ImageViewerProps, ref) => {
@@ -272,12 +265,15 @@ const ImageViewer = forwardRef((props: ImageViewerProps, ref) => {
                 scale.value = withTiming(scale.value - 0.5);
             }
             savedScale.value = scale.value;
+        },
+        getImageData() {
+            return {
+                translateX: translateX.value,
+                translateY: translateY.value,
+                scale: scale.value
+            };
         }
     }));
-
-    useEffect(() => () => {
-        props.sizeCallback(translateX.value, translateY.value, scale.value, props.imageUrl);
-    }, [props.imageUrl, translateX.value, translateY.value, scale.value]);
 
     useEffect(() => {
         props.loadCallback(didLoad);
@@ -343,3 +339,4 @@ const ImageViewer = forwardRef((props: ImageViewerProps, ref) => {
 });
 
 export default ImageViewer
+

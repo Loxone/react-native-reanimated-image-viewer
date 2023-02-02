@@ -200,11 +200,15 @@ const ImageViewer = forwardRef((props, ref) => {
                 scale.value = withTiming(scale.value - 0.5);
             }
             savedScale.value = scale.value;
+        },
+        getImageData() {
+            return {
+                translateX: translateX.value,
+                translateY: translateY.value,
+                scale: scale.value
+            };
         }
     }));
-    useEffect(() => () => {
-        props.sizeCallback(translateX.value, translateY.value, scale.value, props.imageUrl);
-    }, [props.imageUrl, translateX.value, translateY.value, scale.value]);
     useEffect(() => {
         props.loadCallback(didLoad);
     }, [didLoad]);
