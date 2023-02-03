@@ -1,6 +1,6 @@
 import React, { useMemo, useEffect, useImperativeHandle, forwardRef, useState } from "react";
 
-import { useWindowDimensions } from "react-native";
+import { useWindowDimensions, Image } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
     runOnJS,
@@ -20,11 +20,12 @@ export type ImageViewerProps = {
 
 const ImageViewer = forwardRef((props: ImageViewerProps, ref) => {
     const [didLoad, setDidLoad] = useState(false);
+    const [imgDimensions, setImgDimensions] = useState({ width: 0, height: 0 });
 
     const dimensions = useWindowDimensions();
 
-    const scale = useSharedValue(1.1);
-    const savedScale = useSharedValue(1.1);
+    const scale = useSharedValue(1);
+    const savedScale = useSharedValue(1);
 
     const translateY = useSharedValue(0);
     const savedTranslateY = useSharedValue(0);
@@ -281,6 +282,10 @@ const ImageViewer = forwardRef((props: ImageViewerProps, ref) => {
 
     useEffect(() => {
         setDidLoad(false);
+
+        Image.getSize(props.imageUrl, (width, height) => { setImgDimensions({ width, height }) });
+        console.log("Image size: ", imgDimensions.width, imgDimensions.height);
+
     }, [props.imageUrl]);
 
     const imageContainerAnimatedStyle = useAnimatedStyle(() => {
@@ -305,6 +310,8 @@ const ImageViewer = forwardRef((props: ImageViewerProps, ref) => {
     const composedGestures = Gesture.Simultaneous(pinchGesture, panGesture);
     const allGestures = Gesture.Exclusive(composedGestures, doubleTap);
 
+
+
     return (
         <GestureDetector gesture={allGestures}>
             <Animated.View
@@ -322,8 +329,9 @@ const ImageViewer = forwardRef((props: ImageViewerProps, ref) => {
                             {
                                 width: finalWidth,
                                 height: finalHeight,
-                                resizeMode: "contain"
                             },
+
+                            imgDimensions.height > imgDimensions.width ? { resizeMode: "contain" } : { resizeMode: "cover" }
                         ]}
                         source={{
                             uri: props.imageUrl,
@@ -339,4 +347,3 @@ const ImageViewer = forwardRef((props: ImageViewerProps, ref) => {
 });
 
 export default ImageViewer
-
