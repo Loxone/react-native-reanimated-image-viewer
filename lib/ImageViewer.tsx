@@ -284,8 +284,6 @@ const ImageViewer = forwardRef((props: ImageViewerProps, ref) => {
         setDidLoad(false);
 
         Image.getSize(props.imageUrl, (width, height) => { setImgDimensions({ width, height }) });
-        console.log("Image size: ", imgDimensions.width, imgDimensions.height);
-
     }, [props.imageUrl]);
 
     const imageContainerAnimatedStyle = useAnimatedStyle(() => {

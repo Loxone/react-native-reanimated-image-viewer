@@ -1,12 +1,13 @@
 import React, { useMemo, useEffect, useImperativeHandle, forwardRef, useState } from "react";
-import { useWindowDimensions } from "react-native";
+import { useWindowDimensions, Image } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, { runOnJS, useAnimatedStyle, useSharedValue, withDecay, withTiming, } from "react-native-reanimated";
 const ImageViewer = forwardRef((props, ref) => {
     const [didLoad, setDidLoad] = useState(false);
+    const [imgDimensions, setImgDimensions] = useState({ width: 0, height: 0 });
     const dimensions = useWindowDimensions();
-    const scale = useSharedValue(1.1);
-    const savedScale = useSharedValue(1.1);
+    const scale = useSharedValue(1);
+    const savedScale = useSharedValue(1);
     const translateY = useSharedValue(0);
     const savedTranslateY = useSharedValue(0);
     const translateX = useSharedValue(0);
@@ -214,6 +215,7 @@ const ImageViewer = forwardRef((props, ref) => {
     }, [didLoad]);
     useEffect(() => {
         setDidLoad(false);
+        Image.getSize(props.imageUrl, (width, height) => { setImgDimensions({ width, height }); });
     }, [props.imageUrl]);
     const imageContainerAnimatedStyle = useAnimatedStyle(() => {
         return {
@@ -247,8 +249,8 @@ const ImageViewer = forwardRef((props, ref) => {
             {
                 width: finalWidth,
                 height: finalHeight,
-                resizeMode: "contain"
             },
+            imgDimensions.height > imgDimensions.width ? { resizeMode: "contain" } : { resizeMode: "cover" }
         ]} source={{
             uri: props.imageUrl,
         }} onLoadEnd={() => {
