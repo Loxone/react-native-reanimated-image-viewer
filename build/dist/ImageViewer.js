@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect, useImperativeHandle, forwardRef, useState } from "react";
+import React, { useMemo, useEffect, useImperativeHandle, forwardRef, useState, } from "react";
 import { useWindowDimensions, Image } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, { runOnJS, useAnimatedStyle, useSharedValue, withDecay, withTiming, } from "react-native-reanimated";
@@ -206,16 +206,19 @@ const ImageViewer = forwardRef((props, ref) => {
             return {
                 translateX: translateX.value,
                 translateY: translateY.value,
-                scale: scale.value
+                scale: scale.value,
+                ...imgDimensions,
             };
-        }
+        },
     }));
     useEffect(() => {
         props.loadCallback(didLoad);
     }, [didLoad]);
     useEffect(() => {
         setDidLoad(false);
-        Image.getSize(props.imageUrl, (width, height) => { setImgDimensions({ width, height }); });
+        Image.getSize(props.imageUrl, (width, height) => {
+            setImgDimensions({ width, height });
+        });
     }, [props.imageUrl]);
     const imageContainerAnimatedStyle = useAnimatedStyle(() => {
         return {
@@ -237,28 +240,30 @@ const ImageViewer = forwardRef((props, ref) => {
     const composedGestures = Gesture.Simultaneous(pinchGesture, panGesture);
     const allGestures = Gesture.Exclusive(composedGestures, doubleTap);
     return (<GestureDetector gesture={allGestures}>
-            <Animated.View style={{
+			<Animated.View style={{
             flex: 1,
             alignItems: "center",
             justifyContent: "center",
             backgroundColor: "#000",
         }}>
-                <Animated.View style={imageContainerAnimatedStyle}>
-                    <Animated.Image style={[
+				<Animated.View style={imageContainerAnimatedStyle}>
+					<Animated.Image style={[
             imageAnimatedStyle,
             {
                 width: finalWidth,
                 height: finalHeight,
             },
-            imgDimensions.height > imgDimensions.width ? { resizeMode: "contain" } : { resizeMode: "cover" }
+            imgDimensions.height > imgDimensions.width
+                ? { resizeMode: "contain" }
+                : { resizeMode: "cover" },
         ]} source={{
             uri: props.imageUrl,
         }} onLoadEnd={() => {
             setDidLoad(true);
         }}/>
-                </Animated.View>
-            </Animated.View>
-        </GestureDetector>);
+				</Animated.View>
+			</Animated.View>
+		</GestureDetector>);
 });
 export default ImageViewer;
 //# sourceMappingURL=ImageViewer.js.map
