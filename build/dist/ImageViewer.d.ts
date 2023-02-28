@@ -3,6 +3,9 @@ export type ImageViewerProps = {
     imageUrl: string;
     width: number;
     height: number;
+    scale: number;
+    translateY: number;
+    translateX: number;
     onRequestClose: () => unknown;
     loadCallback: (load: boolean) => unknown;
 };

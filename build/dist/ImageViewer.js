@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect, useImperativeHandle, forwardRef, useState, } from "react";
+import React, { useMemo, useEffect, useImperativeHandle, forwardRef, useState, useRef, useLayoutEffect } from "react";
 import { useWindowDimensions, Image } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, { runOnJS, useAnimatedStyle, useSharedValue, withDecay, withTiming, } from "react-native-reanimated";
@@ -6,12 +6,12 @@ const ImageViewer = forwardRef((props, ref) => {
     const [didLoad, setDidLoad] = useState(false);
     const [imgDimensions, setImgDimensions] = useState({ width: 0, height: 0 });
     const dimensions = useWindowDimensions();
-    const scale = useSharedValue(1);
-    const savedScale = useSharedValue(1);
-    const translateY = useSharedValue(0);
-    const savedTranslateY = useSharedValue(0);
-    const translateX = useSharedValue(0);
-    const savedTranslateX = useSharedValue(0);
+    const scale = useSharedValue(props.scale);
+    const savedScale = useSharedValue(props.scale);
+    const translateY = useSharedValue(props.translateY);
+    const savedTranslateY = useSharedValue(props.translateY);
+    const translateX = useSharedValue(props.translateX);
+    const savedTranslateX = useSharedValue(props.translateX);
     const MAX_ZOOM_SCALE = 3;
     const { width: finalWidth, height: finalHeight } = useMemo(() => {
         function ruleOfThree(firstValue, firstResult, secondValue) {
@@ -214,6 +214,17 @@ const ImageViewer = forwardRef((props, ref) => {
     useEffect(() => {
         props.loadCallback(didLoad);
     }, [didLoad]);
+    const renderCount = useRef(0);
+    useLayoutEffect(() => {
+        if (renderCount.current < 2) {
+            renderCount.current += 1;
+        }
+        else {
+            scale.value = 1;
+            translateX.value = 0;
+            translateY.value = 0;
+        }
+    }, [props.imageUrl]);
     useEffect(() => {
         setDidLoad(false);
         Image.getSize(props.imageUrl, (width, height) => {
@@ -240,14 +251,14 @@ const ImageViewer = forwardRef((props, ref) => {
     const composedGestures = Gesture.Simultaneous(pinchGesture, panGesture);
     const allGestures = Gesture.Exclusive(composedGestures, doubleTap);
     return (<GestureDetector gesture={allGestures}>
-			<Animated.View style={{
+            <Animated.View style={{
             flex: 1,
             alignItems: "center",
             justifyContent: "center",
             backgroundColor: "#000",
         }}>
-				<Animated.View style={imageContainerAnimatedStyle}>
-					<Animated.Image style={[
+                <Animated.View style={imageContainerAnimatedStyle}>
+                    <Animated.Image style={[
             imageAnimatedStyle,
             {
                 width: finalWidth,
@@ -261,9 +272,9 @@ const ImageViewer = forwardRef((props, ref) => {
         }} onLoadEnd={() => {
             setDidLoad(true);
         }}/>
-				</Animated.View>
-			</Animated.View>
-		</GestureDetector>);
+                </Animated.View>
+            </Animated.View>
+        </GestureDetector>);
 });
 export default ImageViewer;
 //# sourceMappingURL=ImageViewer.js.map
