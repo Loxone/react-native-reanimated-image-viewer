@@ -278,13 +278,11 @@ const ImageViewer = forwardRef((props: ImageViewerProps, ref) => {
             savedScale.value = scale.value;
         },
         getImageData() {
-            console.log(finalHeight, finalWidth)
             return {
                 translateX: translateX.value,
                 translateY: translateY.value,
                 scale: scale.value,
-                width: finalWidth,
-                height: finalHeight 
+                ...imgDimensions
             };
         },
     }));
