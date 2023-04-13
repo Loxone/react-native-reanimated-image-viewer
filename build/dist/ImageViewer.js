@@ -1,7 +1,7 @@
 import React, { useMemo, useEffect, useImperativeHandle, forwardRef, useState, useRef, useLayoutEffect } from "react";
 import { useWindowDimensions, Image } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
-import Animated, { runOnJS, useAnimatedStyle, useSharedValue, withDecay, withTiming, } from "react-native-reanimated";
+import Animated, { useAnimatedStyle, useSharedValue, withDecay, withTiming, } from "react-native-reanimated";
 const ImageViewer = forwardRef((props, ref) => {
     const [didLoad, setDidLoad] = useState(false);
     const [imgDimensions, setImgDimensions] = useState({ width: 0, height: 0 });
@@ -45,13 +45,18 @@ const ImageViewer = forwardRef((props, ref) => {
     }, [props.width, props.height, dimensions.width, dimensions.height]);
     const pinchGesture = Gesture.Pinch()
         .onStart(() => {
+        props.repositionCallback(true);
         savedScale.value = scale.value;
     })
         .onUpdate((event) => {
         scale.value = savedScale.value * event.scale;
+    })
+        .onEnd(() => {
+        props.repositionCallback(false);
     });
     const panGesture = Gesture.Pan()
         .onBegin(() => {
+        props.repositionCallback(true);
         savedTranslateX.value = translateX.value;
         savedTranslateY.value = translateY.value;
     })
@@ -101,12 +106,6 @@ const ImageViewer = forwardRef((props, ref) => {
     })
         .onEnd((event) => {
         if (scale.value === 1) {
-            if (event.translationY < -50) {
-                if (event.velocityY < -2000 || event.translationY < -200) {
-                    runOnJS(props.onRequestClose)();
-                    return;
-                }
-            }
             translateY.value = withTiming(0);
             translateX.value = withTiming(0);
         }
@@ -142,6 +141,7 @@ const ImageViewer = forwardRef((props, ref) => {
                 clamp: [minTranslateY, maxTranslateY],
             });
         }
+        props.repositionCallback(false);
     });
     const doubleTap = Gesture.Tap()
         .onStart((event) => {
