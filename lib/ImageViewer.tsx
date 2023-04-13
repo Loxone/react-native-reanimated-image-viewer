@@ -11,7 +11,6 @@ import React, {
 import { useWindowDimensions, Image } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
-    runOnJS,
     useAnimatedStyle,
     useSharedValue,
     withDecay,
@@ -25,8 +24,9 @@ export type ImageViewerProps = {
     scale: number;
     translateY: number;
     translateX: number;
-    onRequestClose: () => unknown;
-    loadCallback: (load: boolean) => unknown;
+    onRequestClose: () => void;
+    loadCallback: (load: boolean) => void;
+    repositionCallback: (repositon: boolean) => void;
 };
 
 const ImageViewer = forwardRef((props: ImageViewerProps, ref) => {
@@ -90,14 +90,19 @@ const ImageViewer = forwardRef((props: ImageViewerProps, ref) => {
 
     const pinchGesture = Gesture.Pinch()
         .onStart(() => {
+            props.repositionCallback(true); 
             savedScale.value = scale.value;
         })
         .onUpdate((event) => {
             scale.value = savedScale.value * event.scale;
+        })
+        .onEnd(() => {
+            props.repositionCallback(false);
         });
 
     const panGesture = Gesture.Pan()
         .onBegin(() => {
+            props.repositionCallback(true);
             savedTranslateX.value = translateX.value;
             savedTranslateY.value = translateY.value;
         })
@@ -155,14 +160,6 @@ const ImageViewer = forwardRef((props: ImageViewerProps, ref) => {
         })
         .onEnd((event) => {
             if (scale.value === 1) {
-                if (event.translationY < -50) {
-                    if (event.velocityY < -2000 || event.translationY < -200) {
-                        runOnJS(props.onRequestClose)();
-
-                        return;
-                    }
-                }
-
                 translateY.value = withTiming(0);
                 translateX.value = withTiming(0);
             } else if (scale.value < 1) {
@@ -204,6 +201,7 @@ const ImageViewer = forwardRef((props: ImageViewerProps, ref) => {
                     clamp: [minTranslateY, maxTranslateY],
                 });
             }
+            props.repositionCallback(false);
         });
 
     const doubleTap = Gesture.Tap()
@@ -370,3 +368,4 @@ const ImageViewer = forwardRef((props: ImageViewerProps, ref) => {
 });
 
 export default ImageViewer;
+
