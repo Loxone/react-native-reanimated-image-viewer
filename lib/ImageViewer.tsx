@@ -11,6 +11,7 @@ import React, {
 import { useWindowDimensions, Image } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
+    runOnJS,
     useAnimatedStyle,
     useSharedValue,
     withDecay,
@@ -102,19 +103,19 @@ const ImageViewer = forwardRef<ImageViewerRef, ImageViewerProps>((props, ref) =>
 
     const pinchGesture = Gesture.Pinch()
         .onStart(() => {
-            props.repositionCallback(true);
+            runOnJS(props.repositionCallback)(true);
             savedScale.value = scale.value;
         })
         .onUpdate((event) => {
             scale.value = savedScale.value * event.scale;
         })
         .onEnd(() => {
-            props.repositionCallback(false);
+            runOnJS(props.repositionCallback)(false);
         });
 
     const panGesture = Gesture.Pan()
         .onBegin(() => {
-            props.repositionCallback(true);
+            runOnJS(props.repositionCallback)(true);
             savedTranslateX.value = translateX.value;
             savedTranslateY.value = translateY.value;
         })
@@ -213,7 +214,7 @@ const ImageViewer = forwardRef<ImageViewerRef, ImageViewerProps>((props, ref) =>
                     clamp: [minTranslateY, maxTranslateY],
                 });
             }
-            props.repositionCallback(false);
+            runOnJS(props.repositionCallback)(false);
         });
 
     const doubleTap = Gesture.Tap()
