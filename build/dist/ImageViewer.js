@@ -224,18 +224,24 @@ const ImageViewer = forwardRef((props, ref) => {
             translateX.value = 0;
             translateY.value = 0;
         }
-    }, [props.imageUrl]);
+    }, [props.source]);
     useEffect(() => {
         setDidLoad(false);
         try {
-            Image.getSize(props.imageUrl, (width, height) => {
+            if (typeof props.source === "number") {
+                return;
+            }
+            if (!props.source.uri) {
+                throw new Error("No image uri provided");
+            }
+            Image.getSize(props.source.uri, (width, height) => {
                 setImgDimensions({ width, height });
             });
         }
         catch (e) {
             props.onLoadingFailed(e);
         }
-    }, [props.imageUrl]);
+    }, [props.source]);
     const imageContainerAnimatedStyle = useAnimatedStyle(() => {
         return {
             transform: [
@@ -272,9 +278,7 @@ const ImageViewer = forwardRef((props, ref) => {
             imgDimensions.height > imgDimensions.width
                 ? { resizeMode: "contain" }
                 : { resizeMode: "cover" },
-        ]} source={{
-            uri: props.imageUrl,
-        }} onLoadEnd={() => {
+        ]} source={props.source} onLoadEnd={() => {
             setDidLoad(true);
         }}/>
                 </Animated.View>

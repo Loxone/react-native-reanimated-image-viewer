@@ -8,7 +8,7 @@ import React, {
     useLayoutEffect
 } from "react";
 
-import { useWindowDimensions, Image } from "react-native";
+import {useWindowDimensions, Image, ImageURISource} from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
     runOnJS,
@@ -19,7 +19,7 @@ import Animated, {
 } from "react-native-reanimated";
 
 export type ImageViewerProps = {
-    imageUrl: string;
+    source: ImageURISource | number;
     width: number;
     height: number;
     scale: number;
@@ -312,20 +312,26 @@ const ImageViewer = forwardRef<ImageViewerRef, ImageViewerProps>((props, ref) =>
         translateX.value = 0
         translateY.value = 0
       }
-    }, [props.imageUrl]);
+    }, [props.source]);
 
     useEffect(() => {
         setDidLoad(false);
 
         try {
-            Image.getSize(props.imageUrl, (width, height) => {
+            if (typeof props.source === "number") {
+                return;
+            }
+            if (!props.source.uri) {
+                throw new Error("No image uri provided");
+            }
+            Image.getSize(props.source.uri, (width, height) => {
                 setImgDimensions({width, height});
             });
         } catch (e) {
             props.onLoadingFailed(e as Error);
         }
 
-    }, [props.imageUrl]);
+    }, [props.source]);
 
     const imageContainerAnimatedStyle = useAnimatedStyle(() => {
         return {
@@ -372,9 +378,7 @@ const ImageViewer = forwardRef<ImageViewerRef, ImageViewerProps>((props, ref) =>
                                 ? { resizeMode: "contain" }
                                 : { resizeMode: "cover" },
                         ]}
-                        source={{
-                            uri: props.imageUrl,
-                        }}
+                        source={props.source}
                         onLoadEnd={() => {
                             setDidLoad(true);
                         }}

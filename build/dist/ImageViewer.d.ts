@@ -1,6 +1,7 @@
 import React from "react";
+import { ImageURISource } from "react-native";
 export type ImageViewerProps = {
-    imageUrl: string;
+    source: ImageURISource | number;
     width: number;
     height: number;
     scale: number;
