@@ -28,6 +28,7 @@ export type ImageViewerProps = {
     onRequestClose: () => void;
     loadCallback: (load: boolean) => void;
     repositionCallback: (repositon: boolean) => void;
+    onLoadingFailed: (e:Error) => void;
 };
 
 export type ImageViewerRef = {
@@ -316,9 +317,13 @@ const ImageViewer = forwardRef<ImageViewerRef, ImageViewerProps>((props, ref) =>
     useEffect(() => {
         setDidLoad(false);
 
-        Image.getSize(props.imageUrl, (width, height) => {
-            setImgDimensions({ width, height });
-        });
+        try {
+            Image.getSize(props.imageUrl, (width, height) => {
+                setImgDimensions({width, height});
+            });
+        } catch (e) {
+            props.onLoadingFailed(e as Error);
+        }
 
     }, [props.imageUrl]);
 
