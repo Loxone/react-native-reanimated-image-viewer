@@ -9,6 +9,18 @@ export type ImageViewerProps = {
     onRequestClose: () => void;
     loadCallback: (load: boolean) => void;
     repositionCallback: (repositon: boolean) => void;
+    onLoadingFailed: (e: Error) => void;
 };
-declare const ImageViewer: React.ForwardRefExoticComponent<ImageViewerProps & React.RefAttributes<unknown>>;
+export type ImageViewerRef = {
+    incScale: () => void;
+    decScale: () => void;
+    getImageData: () => {
+        translateX: number;
+        translateY: number;
+        scale: number;
+        width: number;
+        height: number;
+    };
+};
+declare const ImageViewer: React.ForwardRefExoticComponent<ImageViewerProps & React.RefAttributes<ImageViewerRef>>;
 export default ImageViewer;
