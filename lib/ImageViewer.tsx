@@ -29,7 +29,19 @@ export type ImageViewerProps = {
     repositionCallback: (repositon: boolean) => void;
 };
 
-const ImageViewer = forwardRef((props: ImageViewerProps, ref) => {
+export type ImageViewerRef = {
+    incScale: () => void;
+    decScale: () => void;
+    getImageData: () => {
+        translateX: number;
+        translateY: number;
+        scale: number;
+        width: number;
+        height: number;
+    };
+}
+
+const ImageViewer = forwardRef<ImageViewerRef, ImageViewerProps>((props, ref) => {
     const [didLoad, setDidLoad] = useState(false);
     const [imgDimensions, setImgDimensions] = useState({ width: 0, height: 0 });
 
@@ -43,7 +55,7 @@ const ImageViewer = forwardRef((props: ImageViewerProps, ref) => {
 
     const translateX = useSharedValue(props.translateX);
     const savedTranslateX = useSharedValue(props.translateX);
-    
+
     const MAX_ZOOM_SCALE = 3;
 
     const { width: finalWidth, height: finalHeight } = useMemo(() => {
@@ -90,7 +102,7 @@ const ImageViewer = forwardRef((props: ImageViewerProps, ref) => {
 
     const pinchGesture = Gesture.Pinch()
         .onStart(() => {
-            props.repositionCallback(true); 
+            props.repositionCallback(true);
             savedScale.value = scale.value;
         })
         .onUpdate((event) => {
