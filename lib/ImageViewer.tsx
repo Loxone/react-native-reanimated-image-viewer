@@ -318,13 +318,11 @@ const ImageViewer = forwardRef<ImageViewerRef, ImageViewerProps>((props, ref) =>
         setDidLoad(false);
 
         try {
-            if (typeof props.source === "number") {
-                return;
-            }
-            if (!props.source.uri) {
+            const imgUri = typeof props.source === "object" ? props.source.uri : props.source;
+            if (!imgUri) {
                 throw new Error("No image uri provided");
             }
-            Image.getSize(props.source.uri, (width, height) => {
+            Image.getSize(imgUri, (width, height) => {
                 setImgDimensions({width, height});
             });
         } catch (e) {
