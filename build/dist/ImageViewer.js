@@ -141,6 +141,7 @@ const ImageViewer = forwardRef((props, ref) => {
                 clamp: [minTranslateY, maxTranslateY],
             });
         }
+    }).onFinalize(() => {
         runOnJS(props.repositionCallback)(false);
     });
     const doubleTap = Gesture.Tap()

@@ -216,6 +216,7 @@ const ImageViewer = forwardRef<ImageViewerRef, ImageViewerProps>((props, ref) =>
                     clamp: [minTranslateY, maxTranslateY],
                 });
             }
+        }).onFinalize(() => {
             runOnJS(props.repositionCallback)(false);
         });
 
