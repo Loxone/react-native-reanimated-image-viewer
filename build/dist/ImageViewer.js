@@ -229,6 +229,10 @@ const ImageViewer = forwardRef((props, ref) => {
         setDidLoad(false);
         try {
             const imgUri = typeof props.source === "object" ? props.source.uri : props.source;
+            if (typeof imgUri === "number") {
+                // size of local images is not needed
+                return;
+            }
             if (!imgUri) {
                 throw new Error("No image uri provided");
             }
@@ -264,7 +268,7 @@ const ImageViewer = forwardRef((props, ref) => {
             flex: 1,
             alignItems: "center",
             justifyContent: "center",
-            backgroundColor: "#000",
+            backgroundColor: props.backgroundColor ?? "#000",
         }}>
                 <Animated.View style={imageContainerAnimatedStyle}>
                     <Animated.Image style={[

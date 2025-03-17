@@ -11,6 +11,7 @@ export type ImageViewerProps = {
     loadCallback: (load: boolean) => void;
     repositionCallback: (repositon: boolean) => void;
     onLoadingFailed: (e: Error) => void;
+    backgroundColor?: string;
 };
 export type ImageViewerRef = {
     incScale: () => void;

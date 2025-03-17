@@ -29,6 +29,7 @@ export type ImageViewerProps = {
     loadCallback: (load: boolean) => void;
     repositionCallback: (repositon: boolean) => void;
     onLoadingFailed: (e:Error) => void;
+    backgroundColor?: string;
 };
 
 export type ImageViewerRef = {
@@ -319,6 +320,10 @@ const ImageViewer = forwardRef<ImageViewerRef, ImageViewerProps>((props, ref) =>
 
         try {
             const imgUri = typeof props.source === "object" ? props.source.uri : props.source;
+            if (typeof imgUri === "number") {
+                // size of local images is not needed
+                return;
+            }
             if (!imgUri) {
                 throw new Error("No image uri provided");
             }
@@ -360,7 +365,7 @@ const ImageViewer = forwardRef<ImageViewerRef, ImageViewerProps>((props, ref) =>
                     flex: 1,
                     alignItems: "center",
                     justifyContent: "center",
-                    backgroundColor: "#000",
+                    backgroundColor: props.backgroundColor ?? "#000",
                 }}
             >
                 <Animated.View style={imageContainerAnimatedStyle}>
